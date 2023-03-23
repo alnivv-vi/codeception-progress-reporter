@@ -46,7 +46,7 @@ class ProgressReporter extends Extension
     /**
      * Setup
      */
-    public function _initialize()
+    public function _initialize():void
     {
         if ($this->options['steps'] || $this->options['debug']) {
             // Don't show progress bar when --steps or --debug option is provided
@@ -103,7 +103,7 @@ class ProgressReporter extends Extension
     {
         $this->status = new Status();
 
-        $count = $event->getSuite()->count(true);
+        $count = $event->getSuite()->getTestCount();
         $this->progress = new ProgressBar($this->output, $count);
         $this->progress->setFormat('custom');
         $this->progress->setBarWidth($count);
