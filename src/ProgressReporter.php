@@ -53,12 +53,6 @@ class ProgressReporter extends Extension
      */
     public function _initialize():void
     {
-        if ($this->options['steps'] || $this->options['debug']) {
-            // Don't show progress bar when --steps or --debug option is provided
-            $this->unsubscribeFromEvents();
-            return;
-        }
-
         $this->subscribeToEvents();
         $format = '';
         if (!$this->options['silent']) {
@@ -88,14 +82,6 @@ class ProgressReporter extends Extension
             Events::TEST_FAIL => 'fail',
             Events::RESULT_PRINT_AFTER => 'endRun',
         ];
-    }
-
-    /**
-     * Unsubscribe from all events
-     */
-    private function unsubscribeFromEvents()
-    {
-        self::$events = [];
     }
 
     /**
