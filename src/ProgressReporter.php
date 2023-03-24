@@ -81,7 +81,6 @@ class ProgressReporter extends Extension
     {
         self::$events = [
             Events::SUITE_BEFORE => 'beforeSuite',
-            Events::SUITE_AFTER => 'afterSuite',
             Events::TEST_BEFORE => 'beforeTest',
             Events::TEST_AFTER => 'afterTest',
             Events::TEST_SUCCESS => 'success',
@@ -124,14 +123,6 @@ class ProgressReporter extends Extension
     }
 
     /**
-     * After suite
-     */
-    public function afterSuite()
-    {
-        $this->progress->display();
-    }
-
-    /**
      * After test
      */
     public function afterTest()
@@ -151,17 +142,6 @@ class ProgressReporter extends Extension
     {
         $message = $event->getTest()->getMetadata()->getFilename();
         $this->progress->setMessage(pathinfo($message, PATHINFO_FILENAME), 'file');
-    }
-
-
-    /**
-     * Print failed tests
-     *
-     * @param FailEvent $event
-     */
-    public function printFailed(FailEvent $event)
-    {
-        $this->standardReporter->printFail($event);
     }
 
     /**
@@ -196,6 +176,7 @@ class ProgressReporter extends Extension
     public function endRun(): void
     {
         if (empty($this->failedTests)) {
+            $this->output->writeln('empty failed tests');
             return;
         }
         $file = $this->getLogDir() . $this->getUniqReportFile();
