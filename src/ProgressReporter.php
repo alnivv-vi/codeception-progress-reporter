@@ -8,6 +8,7 @@ use Codeception\Event\TestEvent;
 use Codeception\Events;
 use Codeception\Extension;
 use Codeception\Subscriber\Console;
+use Codeception\Test\Descriptor;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
@@ -15,6 +16,10 @@ use Symfony\Component\Console\Helper\ProgressBar;
  */
 class ProgressReporter extends Extension
 {
+    /** @var string */
+    public const REPORT_NAME = 'failedTests';
+
+    private array $failedTests = [];
     /**
      * We are listening for events
      *
@@ -79,10 +84,10 @@ class ProgressReporter extends Extension
             Events::SUITE_AFTER => 'afterSuite',
             Events::TEST_BEFORE => 'beforeTest',
             Events::TEST_AFTER => 'afterTest',
-            Events::TEST_FAIL_PRINT => 'printFailed',
             Events::TEST_SUCCESS => 'success',
             Events::TEST_ERROR => 'error',
             Events::TEST_FAIL => 'fail',
+            Events::RESULT_PRINT_AFTER => 'endRun',
         ];
     }
 
@@ -181,5 +186,36 @@ class ProgressReporter extends Extension
     public function fail()
     {
         $this->status->incFails();
+    }
+
+    public function afterFail(FailEvent $event): void
+    {
+        $this->failedTests[] = Descriptor::getTestFullName($event->getTest());
+    }
+
+    public function afterError(FailEvent $event): void
+    {
+        $this->failedTests[] = Descriptor::getTestFullName($event->getTest());
+    }
+
+    /**
+     * Event after all Tests - write failed tests to report file
+     */
+    public function endRun(): void
+    {
+        if (empty($this->failedTests)) {
+            return;
+        }
+        $file = $this->getLogDir() . $this->getUniqReportFile();
+        if (is_file($file)) {
+            unlink($file); // remove old reportFile
+        }
+
+        file_put_contents($file, implode(PHP_EOL, array_unique($this->failedTests)));
+    }
+
+    public function getUniqReportFile(): string
+    {
+        return self::REPORT_NAME . '_' . uniqid('', true) . '.txt';
     }
 }
