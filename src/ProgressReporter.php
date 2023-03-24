@@ -175,26 +175,18 @@ class ProgressReporter extends Extension
     /**
      * Error event
      */
-    public function error()
+    public function error(FailEvent $event)
     {
         $this->status->incErrors();
+        $this->failedTests[] = Descriptor::getTestFullName($event->getTest());
     }
 
     /**
      * Fail event
      */
-    public function fail()
+    public function fail(FailEvent $event)
     {
         $this->status->incFails();
-    }
-
-    public function afterFail(FailEvent $event): void
-    {
-        $this->failedTests[] = Descriptor::getTestFullName($event->getTest());
-    }
-
-    public function afterError(FailEvent $event): void
-    {
         $this->failedTests[] = Descriptor::getTestFullName($event->getTest());
     }
 
