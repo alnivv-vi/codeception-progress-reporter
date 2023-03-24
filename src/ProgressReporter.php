@@ -28,13 +28,6 @@ class ProgressReporter extends Extension
     public static $events = [];
 
     /**
-     * Standard reporter for printing fails
-     *
-     * @var Console
-     */
-    public $standardReporter;
-
-    /**
      * Progress bar
      *
      * @var ProgressBar
@@ -63,7 +56,6 @@ class ProgressReporter extends Extension
         }
 
         $this->_reconfigure(['settings' => ['silent' => true]]); // turn off printing for everything else
-        $this->standardReporter = new Console($this->options);
         ProgressBar::setFormatDefinition('custom', $format);
         $this->status = new Status();
     }
@@ -76,7 +68,7 @@ class ProgressReporter extends Extension
         self::$events = [
             Events::SUITE_BEFORE => 'beforeSuite',
             Events::TEST_BEFORE => 'beforeTest',
-            Events::TEST_AFTER => 'afterTest',
+            Events::TEST_END => 'afterTest',
             Events::TEST_SUCCESS => 'success',
             Events::TEST_ERROR => 'error',
             Events::TEST_FAIL => 'fail',
@@ -143,8 +135,8 @@ class ProgressReporter extends Extension
      */
     public function error(FailEvent $event)
     {
-        $this->status->incErrors();
         $this->failedTests[] = Descriptor::getTestFullName($event->getTest());
+        $this->status->incErrors();
     }
 
     /**
@@ -152,8 +144,8 @@ class ProgressReporter extends Extension
      */
     public function fail(FailEvent $event)
     {
-        $this->status->incFails();
         $this->failedTests[] = Descriptor::getTestFullName($event->getTest());
+        $this->status->incFails();
     }
 
     /**
