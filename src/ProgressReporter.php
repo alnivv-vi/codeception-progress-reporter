@@ -105,9 +105,9 @@ class ProgressReporter extends Extension
     public function afterTest()
     {
         $this->progress->advance();
-        $this->progress->setMessage($this->status->getSuccess(), 'success');
-        $this->progress->setMessage($this->status->getFails(), 'fails');
-        $this->progress->setMessage($this->status->getErrors(), 'errors');
+//        $this->progress->setMessage($this->status->getSuccess(), 'success');
+//        $this->progress->setMessage($this->status->getFails(), 'fails');
+//        $this->progress->setMessage($this->status->getErrors(), 'errors');
     }
 
     /**
