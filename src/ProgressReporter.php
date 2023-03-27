@@ -7,7 +7,6 @@ use Codeception\Event\SuiteEvent;
 use Codeception\Event\TestEvent;
 use Codeception\Events;
 use Codeception\Extension;
-use Codeception\Subscriber\Console;
 use Codeception\Test\Descriptor;
 use Symfony\Component\Console\Helper\ProgressBar;
 
