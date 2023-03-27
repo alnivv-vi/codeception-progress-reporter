@@ -69,8 +69,8 @@ class ProgressReporter extends Extension
             Events::TEST_BEFORE => 'beforeTest',
             Events::TEST_END => 'afterTest',
             Events::TEST_SUCCESS => 'success',
-            Events::TEST_ERROR => 'error',
-            Events::TEST_FAIL => 'fail',
+            Events::TEST_ERROR => 'afterError',
+            Events::TEST_FAIL => 'afterFail',
             Events::RESULT_PRINT_AFTER => 'endRun',
         ];
     }
@@ -129,22 +129,17 @@ class ProgressReporter extends Extension
         $this->status->incSuccess();
     }
 
-    /**
-     * Error event
-     */
-    public function error(FailEvent $event)
+    public function afterFail(FailEvent $event): void
     {
+        $this->status->incFails();
+        $this->output->write('[-] ');
         $this->failedTests[] = Descriptor::getTestFullName($event->getTest());
-        $this->status->incErrors();
     }
 
-    /**
-     * Fail event
-     */
-    public function fail(FailEvent $event)
+    public function afterError(FailEvent $event): void
     {
+        $this->status->incErrors();
         $this->failedTests[] = Descriptor::getTestFullName($event->getTest());
-        $this->status->incFails();
     }
 
     /**
@@ -164,7 +159,7 @@ class ProgressReporter extends Extension
         file_put_contents($file, implode(PHP_EOL, array_unique($this->failedTests)));
     }
 
-    public function getUniqReportFile(): string
+    private function getUniqReportFile(): string
     {
         return self::REPORT_NAME . '_' . uniqid('', true) . '.txt';
     }
