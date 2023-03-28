@@ -51,7 +51,7 @@ class ProgressReporter extends Extension
             $format = "\nCurrent suite: <options=bold>%suite%</>\n" .
                 "Current test: <options=bold>%file%</>\n" .
                 "<fg=green>Success: %success%</> <fg=yellow>Errors: %errors%</> <fg=red>Fails: %fails%</>\n" .
-                "<fg=cyan>[%bar%]</>\n%current%/%max% %percent:3s%% \n";
+                "<fg=cyan>[%bar%]</>\n%current%/%max% %percent:3s%%\n";
         }
 
         $this->_reconfigure(['settings' => ['silent' => true]]); // turn off printing for everything else
